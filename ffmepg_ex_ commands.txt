@@ -1,0 +1,64 @@
+
+/*
+ * Document for Alpera Savunma Sistemleri A.Ş.
+ * written by YMN$ @ 1.04.2021
+ * last modified @ 5.04.2021
+ *
+ * Screen Resolutions & Dimension Values & 
+ *
+*/
+__     __ __  __  _   _   _  
+\ \   / /|  \/  || \ | | | | 
+ \ \_/ / | \  / ||  \| |/ __)
+  \   /  | |\/| || . ` |\__ \
+   | |   | |  | || |\  |(   /
+   |_|   |_|  |_||_| \_| |_| 
+
+.____                        .__    .___         _________                                      
+|    |    ____   ____ _____  |  |   |   |_____   \_   ___ \_____    _____   ________________    
+|    |   /  _ \_/ ___\\__  \ |  |   |   \____ \  /    \  \/\__  \  /     \_/ __ \_  __ \__  \   
+|    |__(  <_> )  \___ / __ \|  |__ |   |  |_> > \     \____/ __ \|  Y Y  \  ___/|  | \// __ \_ 
+|_______ \____/ \___  >____  /____/ |___|   __/   \______  (____  /__|_|  /\___  >__|  (____  / 
+        \/          \/     \/           |__|             \/     \/      \/     \/           \/ 
+################################################################################################
+
+####### GENERAL COMMANDS FOR FFMPEG FRAMEWORK #######
+
+ffplay -i rtsp://@192.168.1.208:554/stream0 
+
+Main show command for real time transfer protocol connection.Testing results with an eroor or not .
+
+#################################################
+
+ffmpeg -v verbose  -i rtsp://@192.168.1.208:554/stream0  -vf scale=1920:1080  -vcodec libx264 -r 25 -b:v 1000000 -crf 31 -acodec aac  -sc_threshold 0 -f hls  -hls_time 5  -segment_time 5 -hls_list_size 5 C:\cam\stream.m3u8
+
+If no error coming out there need to be files started to get created by the FFMPEG.
+On the directory we decide there needs to be a file taking the role of being index.
+Other files Should be including time relevant short videos
+
+################################################
+
+ffmpeg -rtsp_transport tcp \
+    -i rtsp://smartiptv:PASSWORD@192.168.2.3:6911/Streaming/Channels/101 \   ///example 
+    -i rtsp://smartiptv:PASSWORD@192.168.2.3:6911/Streaming/Channels/201 \   ///example
+    -i rtsp://smartiptv:PASSWORD@192.168.2.3:6911/Streaming/Channels/301 \  ///example
+    -i rtsp://smartiptv:PASSWORD@192.168.2.3:6911/Streaming/Channels/401 \  ///example
+    -filter_complex "
+		nullsrc=size=1920×1080 [base];
+		[0:v] setpts=PTS-STARTPTS, scale=960×540 [upperleft];
+		[1:v] setpts=PTS-STARTPTS, scale=960×540 [upperright];
+		[2:v] setpts=PTS-STARTPTS, scale=960×540 [lowerleft];
+		[3:v] setpts=PTS-STARTPTS, scale=960×540 [lowerright];
+		[base][upperleft] overlay=shortest=1 [tmp1];
+		[tmp1][upperright] overlay=shortest=1:x=960 [tmp2];
+		[tmp2][lowerleft] overlay=shortest=1:y=540 [tmp3];
+		[tmp3][lowerright] overlay=shortest=1:x=960:y=540
+	" \
+	-c:v libx264 -preset superfast -crf 18 -f matroska – | ffplay –
+
+//For having a mosaic view of 4 ip cameras.
+
+##############################################
+
+//https://www.youtube.com/watch?v=LcESmR70NFo&t=485s&ab_channel=VideoAnaliz     ---- have a look 
+
